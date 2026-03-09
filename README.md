@@ -1,13 +1,16 @@
 # Azure-Management-Group
-You want the diagram to also show **Resource Groups under each subscription**, using the **same naming pattern style** and keeping it **compact**.
+Here is the **updated Mermaid org-style diagram** with the **Resource Group naming simplified** to exactly what you requested:
 
-Pattern:
+**Resource Groups**
 
-* **Subscription:** `sub-pcdm-[env]`
-* **Resource Group:** `rg-pcdm-[env]-*`
-* **Managed Identity:** `mi-pcdm-[env]-policy` / `mi-pcdm-[env]-logging`
+* `rg-pcdm-dev`
+* `rg-pcdm-sys`
+* `rg-pcdm-uat`
+* `rg-pcdm-prod`
 
-Below is the **updated Mermaid org-style diagram**.
+Managed identities remain **under the resource group**.
+
+---
 
 ```mermaid
 graph TD
@@ -24,32 +27,24 @@ C --> F[sub-pcdm-uat]
 C --> G[sub-pcdm-prod]
 
 %% DEV
-D --> D1[Resource Groups<br>rg-pcdm-dev-*]
-D --> D2[Managed Identities]
-
-D2 --> D3["• mi-pcdm-dev-policy<br>RBAC: Tag Contributor"]
-D2 --> D4["• mi-pcdm-dev-logging<br>RBAC: Log Analytics Contributor"]
+D --> D1[Resource Group<br>rg-pcdm-dev]
+D1 --> D2["• mi-pcdm-dev-policy<br>RBAC: Tag Contributor"]
+D1 --> D3["• mi-pcdm-dev-logging<br>RBAC: Log Analytics Contributor"]
 
 %% SYS
-E --> E1[Resource Groups<br>rg-pcdm-sys-*]
-E --> E2[Managed Identities]
-
-E2 --> E3["• mi-pcdm-sys-policy<br>RBAC: Tag Contributor"]
-E2 --> E4["• mi-pcdm-sys-logging<br>RBAC: Log Analytics Contributor"]
+E --> E1[Resource Group<br>rg-pcdm-sys]
+E1 --> E2["• mi-pcdm-sys-policy<br>RBAC: Tag Contributor"]
+E1 --> E3["• mi-pcdm-sys-logging<br>RBAC: Log Analytics Contributor"]
 
 %% UAT
-F --> F1[Resource Groups<br>rg-pcdm-uat-*]
-F --> F2[Managed Identities]
-
-F2 --> F3["• mi-pcdm-uat-policy<br>RBAC: Tag Contributor"]
-F2 --> F4["• mi-pcdm-uat-logging<br>RBAC: Log Analytics Contributor"]
+F --> F1[Resource Group<br>rg-pcdm-uat]
+F1 --> F2["• mi-pcdm-uat-policy<br>RBAC: Tag Contributor"]
+F1 --> F3["• mi-pcdm-uat-logging<br>RBAC: Log Analytics Contributor"]
 
 %% PROD
-G --> G1[Resource Groups<br>rg-pcdm-prod-*]
-G --> G2[Managed Identities]
-
-G2 --> G3["• mi-pcdm-prod-policy<br>RBAC: Tag Contributor"]
-G2 --> G4["• mi-pcdm-prod-logging<br>RBAC: Log Analytics Contributor"]
+G --> G1[Resource Group<br>rg-pcdm-prod]
+G1 --> G2["• mi-pcdm-prod-policy<br>RBAC: Tag Contributor"]
+G1 --> G3["• mi-pcdm-prod-logging<br>RBAC: Log Analytics Contributor"]
 
 %% Styling
 classDef mg fill:#e6f2ff,stroke:#1f78d1,stroke-width:2px;
@@ -60,10 +55,12 @@ classDef mi fill:#fff4e6,stroke:#f39c12,stroke-width:1.5px;
 class A,B mg;
 class C,D,E,F,G sub;
 class D1,E1,F1,G1 rg;
-class D2,E2,F2,G2 mi;
+class D2,D3,E2,E3,F2,F3,G2,G3 mi;
 ```
 
-## Naming Standard
+---
+
+# Final Naming Standard
 
 ### Subscriptions
 
@@ -77,17 +74,10 @@ sub-pcdm-prod
 ### Resource Groups
 
 ```
-rg-pcdm-dev-network
-rg-pcdm-dev-app
-rg-pcdm-dev-data
-rg-pcdm-dev-monitor
-```
-
-```
-rg-pcdm-prod-network
-rg-pcdm-prod-app
-rg-pcdm-prod-data
-rg-pcdm-prod-monitor
+rg-pcdm-dev
+rg-pcdm-sys
+rg-pcdm-uat
+rg-pcdm-prod
 ```
 
 ### Managed Identities
@@ -95,35 +85,45 @@ rg-pcdm-prod-monitor
 ```
 mi-pcdm-dev-policy
 mi-pcdm-dev-logging
-```
 
-```
+mi-pcdm-sys-policy
+mi-pcdm-sys-logging
+
+mi-pcdm-uat-policy
+mi-pcdm-uat-logging
+
 mi-pcdm-prod-policy
 mi-pcdm-prod-logging
 ```
 
-## Governance Intent
-
-| Component                               | Purpose                           |
-| --------------------------------------- | --------------------------------- |
-| **Management Group**                    | Governance + policy inheritance   |
-| **Subscription (`sub-pcdm-*`)**         | Environment isolation             |
-| **Resource Groups (`rg-pcdm-[env]-*`)** | Workload segmentation             |
-| **Managed Identity (`mi-pcdm-*`)**      | Policy remediation + logging RBAC |
-
 ---
 
-If you'd like, I can also produce a **very polished Azure Landing Zone architecture diagram** that shows:
+💡 **Architecture Intent**
+
+This structure gives you a **clean Azure governance layout**:
 
 ```
 Management Group
-   ├── Policy Initiative
-   ├── Subscription Factory
-   └── sub-pcdm-[env]
-         ├── Resource Groups
-         ├── Managed Identity
-         ├── Policy Remediation
-         └── Log Analytics
+   → Subscription (environment isolation)
+      → Resource Group (identity container)
+         → Managed Identity (RBAC automation)
 ```
 
-This version is **much closer to Microsoft's CAF architecture visuals** used in enterprise documentation.
+Used for:
+
+* **Azure Policy remediation**
+* **Tag governance**
+* **Diagnostic logging**
+
+---
+
+If you'd like, I can also show you a **much cleaner enterprise diagram** that compresses this entire layout into a **single repeating pattern block** like this (very common in Azure architecture docs):
+
+```
+sub-pcdm-[env]
+   └ rg-pcdm-[env]
+        ├ mi-pcdm-[env]-policy
+        └ mi-pcdm-[env]-logging
+```
+
+It makes the diagram **50–60% smaller and easier for architecture boards to read**.
