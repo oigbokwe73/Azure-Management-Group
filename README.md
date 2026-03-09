@@ -1,19 +1,14 @@
 # Azure-Management-Group
 
-Below is an **extended Mermaid org-style diagram** based on your Azure Management Group structure.
+Here is the **updated Mermaid org-style diagram** with your requested changes:
 
-Changes made:
+Changes applied:
 
-* **Removed `test` environment**
-* Added **Managed Identity for Policy Remediation**
-
-  * Role: **Tag Contributor**
-* Added **Managed Identity for Logging**
-
-  * Role: **Log Analytics Contributor**
-* RBAC identities applied **per environment subscription**
-
----
+* Managed Identity naming: **`mi-pcdm-[env]-[policy/logging]`**
+* Added **Contributor role for Resource Group creation**
+* Under **Managed Identities**, roles appear as **bullet-style child nodes**
+* Environments: **dev, sys, uat, prod**
+* Subscription wildcard: **`sub-pcdm-*`**
 
 ```mermaid
 graph TD
@@ -30,40 +25,44 @@ graph TD
     C --> G[sub-pcdm-prod]
 
 %% DEV
-    D --> D1[Managed Identity<br>pcdm-dev-policy-mi]
-    D1 --> D2[Azure RBAC Role<br>Tag Contributor]
-    D1 --> D3[Custom Policy Remediation<br>Tag Enforcement]
+    D --> D1[Managed Identity<br>mi-pcdm-dev-policy]
+    D1 --> D2["• Tag Contributor"]
+    D1 --> D3["• Contributor (Resource Group Creation)"]
+    D1 --> D4["• Custom Policy Remediation"]
 
-    D --> D4[Managed Identity<br>pcdm-dev-logging-mi]
-    D4 --> D5[Azure RBAC Role<br>Log Analytics Contributor]
-    D4 --> D6[Send Logs to Log Analytics Workspace]
+    D --> D5[Managed Identity<br>mi-pcdm-dev-logging]
+    D5 --> D6["• Log Analytics Contributor"]
+    D5 --> D7["• Send Logs to Log Analytics Workspace"]
 
 %% SYS
-    E --> E1[Managed Identity<br>pcdm-sys-policy-mi]
-    E1 --> E2[Azure RBAC Role<br>Tag Contributor]
-    E1 --> E3[Custom Policy Remediation<br>Tag Enforcement]
+    E --> E1[Managed Identity<br>mi-pcdm-sys-policy]
+    E1 --> E2["• Tag Contributor"]
+    E1 --> E3["• Contributor (Resource Group Creation)"]
+    E1 --> E4["• Custom Policy Remediation"]
 
-    E --> E4[Managed Identity<br>pcdm-sys-logging-mi]
-    E4 --> E5[Azure RBAC Role<br>Log Analytics Contributor]
-    E4 --> E6[Send Logs to Log Analytics Workspace]
+    E --> E5[Managed Identity<br>mi-pcdm-sys-logging]
+    E5 --> E6["• Log Analytics Contributor"]
+    E5 --> E7["• Send Logs to Log Analytics Workspace"]
 
 %% UAT
-    F --> F1[Managed Identity<br>pcdm-uat-policy-mi]
-    F1 --> F2[Azure RBAC Role<br>Tag Contributor]
-    F1 --> F3[Custom Policy Remediation<br>Tag Enforcement]
+    F --> F1[Managed Identity<br>mi-pcdm-uat-policy]
+    F1 --> F2["• Tag Contributor"]
+    F1 --> F3["• Contributor (Resource Group Creation)"]
+    F1 --> F4["• Custom Policy Remediation"]
 
-    F --> F4[Managed Identity<br>pcdm-uat-logging-mi]
-    F4 --> F5[Azure RBAC Role<br>Log Analytics Contributor]
-    F4 --> F6[Send Logs to Log Analytics Workspace]
+    F --> F5[Managed Identity<br>mi-pcdm-uat-logging]
+    F5 --> F6["• Log Analytics Contributor"]
+    F5 --> F7["• Send Logs to Log Analytics Workspace"]
 
 %% PROD
-    G --> G1[Managed Identity<br>pcdm-prod-policy-mi]
-    G1 --> G2[Azure RBAC Role<br>Tag Contributor]
-    G1 --> G3[Custom Policy Remediation<br>Tag Enforcement]
+    G --> G1[Managed Identity<br>mi-pcdm-prod-policy]
+    G1 --> G2["• Tag Contributor"]
+    G1 --> G3["• Contributor (Resource Group Creation)"]
+    G1 --> G4["• Custom Policy Remediation"]
 
-    G --> G4[Managed Identity<br>pcdm-prod-logging-mi]
-    G4 --> G5[Azure RBAC Role<br>Log Analytics Contributor]
-    G4 --> G6[Send Logs to Log Analytics Workspace]
+    G --> G5[Managed Identity<br>mi-pcdm-prod-logging]
+    G5 --> G6["• Log Analytics Contributor"]
+    G5 --> G7["• Send Logs to Log Analytics Workspace"]
 
 %% Styling
     classDef mg fill:#e6f2ff,stroke:#1f78d1,stroke-width:2px;
@@ -73,37 +72,52 @@ graph TD
 
     class A,B mg;
     class C,D,E,F,G sub;
-    class D1,D4,E1,E4,F1,F4,G1,G4 mi;
-    class D2,D5,E2,E5,F2,F5,G2,G5 role;
+    class D1,D5,E1,E5,F1,F5,G1,G5 mi;
+    class D2,D3,D4,D6,D7,E2,E3,E4,E6,E7,F2,F3,F4,F6,F7,G2,G3,G4,G6,G7 role;
 ```
 
+### Naming Pattern
+
+**Subscriptions**
+
+```
+sub-pcdm-dev
+sub-pcdm-sys
+sub-pcdm-uat
+sub-pcdm-prod
+```
+
+**Managed Identities**
+
+```
+mi-pcdm-dev-policy
+mi-pcdm-dev-logging
+
+mi-pcdm-sys-policy
+mi-pcdm-sys-logging
+
+mi-pcdm-uat-policy
+mi-pcdm-uat-logging
+
+mi-pcdm-prod-policy
+mi-pcdm-prod-logging
+```
+
+### RBAC Strategy
+
+| Managed Identity        | Purpose                          | Roles                        |
+| ----------------------- | -------------------------------- | ---------------------------- |
+| `mi-pcdm-[env]-policy`  | Azure Policy remediation         | Tag Contributor, Contributor |
+| `mi-pcdm-[env]-logging` | Diagnostic settings + monitoring | Log Analytics Contributor    |
+
 ---
 
-### Environment Naming Convention
+If you'd like, I can also produce a **much cleaner enterprise Azure Landing Zone diagram** that visually shows:
 
-| Environment     | Subscription Name |
-| --------------- | ----------------- |
-| Development     | `sub-pcdm-dev`    |
-| System Test     | `sub-pcdm-sys`    |
-| User Acceptance | `sub-pcdm-uat`    |
-| Production      | `sub-pcdm-prod`   |
+* **Management Group → Policy Assignment**
+* **DeployIfNotExists remediation**
+* **Managed Identity permissions**
+* **Central Log Analytics Workspace**
+* **Subscription factory pattern (`sub-pcdm-*`)**
 
----
-
-### Managed Identity Strategy
-
-| Identity            | Purpose                                  | RBAC Role                     |
-| ------------------- | ---------------------------------------- | ----------------------------- |
-| `pcdm-*-policy-mi`  | Used by Azure Policy remediation tasks   | **Tag Contributor**           |
-| `pcdm-*-logging-mi` | Used to send logs / configure monitoring | **Log Analytics Contributor** |
-
----
-
-If you want, I can also create a **more enterprise Azure landing zone diagram** showing:
-
-* **Management Group → Policy → Subscription → Resource Groups**
-* **Policy Assignment**
-* **DeployIfNotExists remediation flow**
-* **Log Analytics workspace centralization**
-
-which is typically how **Azure CAF governance diagrams** are presented.
+which is **exactly how Azure governance diagrams are typically presented in architecture documents.**
